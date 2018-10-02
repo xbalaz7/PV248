@@ -100,7 +100,7 @@ class Print:
         print(format_voices(self.edition.composition.voices))
         print("Partiture: " + format_partiture(self.partiture))
         print("Incipit: " + format_to_string(self.edition.composition.incipit))
-        print("\n")
+        print("")
 
     def composition(self):
         return self.edition.composition
