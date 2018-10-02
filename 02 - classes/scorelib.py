@@ -281,7 +281,7 @@ def load(scores):
            prints.append(loaded_print)
            voices = []       
            
-    return prints
+    return sorted(prints, key=operator.attrgetter('print_id')):
            
 
 def main(argv):
