@@ -1,5 +1,6 @@
 import sys
 import re
+import operator
 
 def format_people(people):
     people_string = ""    
@@ -239,8 +240,9 @@ def load(scores):
     incipit = None    
         
     edition_name = None
-    edition_authors = None    
+    edition_authors = None
     
+    regex = re.compile(r"Print Number: (.|\s)*\S(.|\s)*")
     for line in scores:       
         if line.startswith("Print Number:"):                      
            print_removed = re.sub(r"Print Number:", '', line)  
@@ -281,7 +283,7 @@ def load(scores):
            prints.append(loaded_print)
            voices = []       
            
-    return sorted(prints, key=operator.attrgetter('print_id')):
+    return sorted(prints, key=operator.attrgetter('print_id'))
            
 
 def main(argv):
