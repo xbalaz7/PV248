@@ -239,9 +239,8 @@ def load(scores):
     incipit = None    
         
     edition_name = None
-    edition_authors = None
+    edition_authors = None    
     
-    regex = re.compile(r"Print Number: (.|\s)*\S(.|\s)*")
     for line in scores:       
         if line.startswith("Print Number:"):                      
            print_removed = re.sub(r"Print Number:", '', line)  
