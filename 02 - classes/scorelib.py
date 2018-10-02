@@ -175,7 +175,7 @@ def load_string(line):
 
 def load_voice(line): 
     name = None
-    range = None
+    range_attribute = None
 
     voice_removed = re.sub(r"Voice (\S)*:", '', line)     
     voice_stripped = voice_removed.strip() 
@@ -185,11 +185,11 @@ def load_voice(line):
        range_string = match.group(0)
        name_string = re.sub(r"((\S)*--(\S)*)", '', voice_stripped)
        name = name_string.strip()
-       range = re.sub(r";|,", '', range_string)  
+       range_attribute = re.sub(r";|,", '', range_string)  
     elif voice_stripped != '':
        name = voice_stripped
         
-    voice = Voice(name, range)
+    voice = Voice(name, range_attribute)
     return voice
 
 def load_editors(line):    
