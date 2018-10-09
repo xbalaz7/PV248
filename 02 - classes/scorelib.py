@@ -9,7 +9,7 @@ def format_people(people):
         people_string += person.name
         
         if person.born or person.died:
-           people_string += "("
+           people_string += " ("
            if person.born: 
               people_string += str(person.born)
            people_string += "--"
@@ -39,7 +39,7 @@ def format_voices(voices):
            result_string += voice.range
         elif voice.name and (voice.range is None):
            result_string += voice.name
-        elif voice.name and voice.range:
+        elif voice.name and voice.range:           
            result_string += voice.range + "; " + voice.name
         
         if voice != voices[-1]:
@@ -119,13 +119,16 @@ def load_people(line):
         born = None
         died = None
 
-        date_birth = re.search(r"\*[0-9]{4}", person)
+        date_birth = re.search(r"(\*[0-9]{4})|(\([0-9]{4}--\))|(\([0-9]{4}-\))", person)
         if date_birth:
            born = int(date_birth.group(0)[1:5])
            
         date_death = re.search(r"\+[0-9]{4}", person)
         if date_death:
            died = int(date_death.group(0)[1:5])
+        date_death_alternative = re.search(r"(\(--[0-9]{4}\))|(\(-[0-9]{4}\))", person)
+        if date_death_alternative:           
+           died = int(date_death.alternative.group()(0)[3:7])
            
         dates = re.search(r"(\([0-9]{4}--[0-9]{4}\))|(\([0-9]{4}-[0-9]{4}\))", person)        
         if dates:          
@@ -138,8 +141,9 @@ def load_people(line):
               if dates_split[0]: born = int(dates_split[0][1:5])
               if dates_split[1]: died = int(dates_split[1][0:4])                      
         
-        parentheses_removed = re.sub(r"\([^a-zA-Z]*\)", '', person) 
-        person = Person(str(parentheses_removed), born, died)
+        parentheses_removed = re.sub(r"\((.|\s)*\S(.|\s)*\)", '', person) 
+        person_name_strip = parentheses_removed.strip()
+        person = Person(str(person_name_strip), born, died)
         people.append(person)       
     
     return people
@@ -181,16 +185,16 @@ def load_voice(line):
     voice_removed = re.sub(r"Voice (\S)*:", '', line)     
     voice_stripped = voice_removed.strip() 
     
-    match = re.match(r"((\S)*--(\S)*)(,|;)", voice_stripped)
-    if match:
+    match = re.match(r"(((\S)*--(\S)*),)|(((\S)*--(\S)*;))", voice_stripped)
+    if match:       
        range_string = match.group(0)
-       name_string = re.sub(r"((\S)*--(\S)*)", '', voice_stripped)
+       name_string = re.sub(r"(((\S)*--(\S)*),)|(((\S)*--(\S)*;))", '', voice_stripped)
        name = name_string.strip()
-       range_attribute = re.sub(r";|,", '', range_string)  
+       range_attribute = re.sub(r"(;)|(,)", '', range_string)          
     elif voice_stripped != '':
        name = voice_stripped
         
-    voice = Voice(name, range_attribute)
+    voice = Voice(name, range_attribute)    
     return voice
 
 def load_editors(line):    
@@ -244,7 +248,7 @@ def load(filename):
     edition_authors = None
     
     regex = re.compile(r"Print Number: (.|\s)*\S(.|\s)*")
-    for line in scores:       
+    for line in scores:          
         if line.startswith("Print Number:"):                      
            print_removed = re.sub(r"Print Number:", '', line)  
            print_stripped = print_removed.strip()
@@ -270,20 +274,19 @@ def load(filename):
            editor_removed = re.sub(r"Editor:", '', line)                                
            edition_authors = load_editors(editor_removed)              
         elif line.startswith("Voice"):   
-           voices.append(load_voice(line)) 
+           voices.append(load_voice(line))            
         elif line.startswith("Partiture:"):   
            partiture = load_partiture(line)               
         elif line.startswith("Incipit:"):
-           incipit_removed = re.sub(r"Incipit:", '', line)
-           incipit_split = incipit_removed.split("|")  
-           incipit = load_string(incipit_split[0])   
+           incipit_removed = re.sub(r"Incipit:", '', line)            
+           incipit = load_string(incipit_removed)  
    
            composition = Composition(composition_name, incipit, key, genre, composition_year, voices, composition_authors)
            edition = Edition(composition, edition_authors, edition_name)           
            loaded_print = Print(edition, print_id, partiture)           
            prints.append(loaded_print)
-           voices = []       
-           
+           voices = []    
+    
     return sorted(prints, key=operator.attrgetter('print_id'))
            
 
@@ -291,4 +294,4 @@ def main(argv):
     load(sys.argv[1])
 
 if __name__ == "__main__":
-   main(sys.argv[1:])
+    main(sys.argv[1:])
