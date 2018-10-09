@@ -127,7 +127,7 @@ def load_people(line):
         if date_death:
            died = int(date_death.group(0)[1:5])
            
-        dates = re.search(r"\([0-9]{4}--[0-9]{4}\) | \([0-9]{4}-[0-9]{4}\)", person)        
+        dates = re.search(r"\(([0-9]{4}--[0-9]{4}\))|(\([0-9]{4}-[0-9]{4}\))", person)        
         if dates:          
            dates_split = re.split(r"--", dates.group(0))
            if len(dates_split) == 2:              
