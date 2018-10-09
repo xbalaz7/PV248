@@ -9,7 +9,7 @@ def format_people(people):
         people_string += person.name
         
         if person.born or person.died:
-           people_string += " ("
+           people_string += "("
            if person.born: 
               people_string += str(person.born)
            people_string += "--"
