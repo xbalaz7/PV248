@@ -119,17 +119,19 @@ def load_people(line):
         born = None
         died = None
 
-        date_birth = re.search(r"(\*[0-9]{4})|(\([0-9]{4}--\))|(\([0-9]{4}-\))", person)
+        date_birth = re.search(r"(\*[0-9]{4})|(\([0-9]{4}--(.)*\))|(\([0-9]{4}-(.)*\))", person)
         if date_birth:
-           born = int(date_birth.group(0)[1:5])
-           
+           born = int(date_birth.group(0)[1:5])           
         date_death = re.search(r"\+[0-9]{4}", person)
         if date_death:
            died = int(date_death.group(0)[1:5])
-        date_death_alternative = re.search(r"(\(--[0-9]{4}\))|(\(-[0-9]{4}\))", person)
+        date_death_alternative = re.search(r"(\((.)*--[0-9]{4}\))|(\((.)*-[0-9]{4}\))", person)
         if date_death_alternative:           
-           died = int(date_death.alternative.group()(0)[3:7])
-           
+           specific_year = re.search(r"-[0-9]{4}", date_death_alternative.group())
+           dash_removed = re.sub(r"-", '', specific_year.group(0))
+           died = int(dash_removed)           
+
+        # Likely not needed anymore but I am letting it be here just to be sure
         dates = re.search(r"(\([0-9]{4}--[0-9]{4}\))|(\([0-9]{4}-[0-9]{4}\))", person)        
         if dates:          
            dates_split = re.split(r"--", dates.group(0))
