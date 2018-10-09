@@ -127,7 +127,7 @@ def load_people(line):
         if date_death:
            died = int(date_death.group(0)[1:5])
            
-        dates = re.search(r"\(([0-9]{4}--[0-9]{4}\))|(\([0-9]{4}-[0-9]{4}\))", person)        
+        dates = re.search(r"(\([0-9]{4}--[0-9]{4}\))|(\([0-9]{4}-[0-9]{4}\))", person)        
         if dates:          
            dates_split = re.split(r"--", dates.group(0))
            if len(dates_split) == 2:              
@@ -225,7 +225,8 @@ def load_editors(line):
     return load_people(editors)
 
 
-def load(scores):   
+def load(filename):  
+    scores = open(filename, 'r', encoding='utf_8')
     prints = []    
 
     print_id = None
@@ -286,9 +287,8 @@ def load(scores):
     return sorted(prints, key=operator.attrgetter('print_id'))
            
 
-def main(argv):
-    scores = open(sys.argv[1], 'r', encoding='utf_8')
-    load(scores)
+def main(argv):    
+    load(sys.argv[1])
 
 if __name__ == "__main__":
    main(sys.argv[1:])
