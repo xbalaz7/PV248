@@ -1,9 +1,8 @@
 import sys 
 import scorelib
 
-def main(argv):
-    scores = open(sys.argv[1], 'r', encoding='utf_8')
-    prints = scorelib.load(scores)
+def main(argv):    
+    prints = scorelib.load(sys.argv[1])
     
     for item in prints:
         item.format()         
