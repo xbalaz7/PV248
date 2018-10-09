@@ -9,7 +9,7 @@ def format_people(people):
         people_string += person.name
         
         if person.born or person.died:
-           people_string += "("
+           people_string += " ("
            if person.born: 
               people_string += str(person.born)
            people_string += "--"
@@ -135,7 +135,7 @@ def load_people(line):
               if dates_split[1]: died = int(dates_split[1][0:4])              
            elif len(re.split(r"-", dates.group(0))) == 2:                  
               dates_split = re.split(r"-", dates.group(0))
-              if dates_split[0]: born = int(dates_split[0][2:6])
+              if dates_split[0]: born = int(dates_split[0][1:5])
               if dates_split[1]: died = int(dates_split[1][0:4])                      
         
         parentheses_removed = re.sub(r"\([^a-zA-Z]*\)", '', person) 
