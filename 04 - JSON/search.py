@@ -73,7 +73,7 @@ def search_composers(connection, input):
     cursor.execute("SELECT * FROM person WHERE name LIKE ? AND person.id IN (SELECT id from score_author)", ('%' + input + '%',))
     composers = cursor.fetchall()
     
-    composer_prints = []
+    composer_prints = {}
     for composer in composers:        
         cursor.execute("SELECT print.id, print.partiture FROM print JOIN edition ON print.edition = edition.id JOIN score ON edition.score = score.id \
                         JOIN score_author ON score.id = score_author.score WHERE score_author.composer = ?", (composer[0],))
@@ -94,7 +94,7 @@ def search_composers(connection, input):
             finished = final_print(print_item, edition, editors, score, score_composers, voices)
             full_prints.append(finished)
 
-        composer_prints.append({composer[3] : full_prints})
+        composer_prints[composer[3]] = full_prints
 
     print(json.dumps(composer_prints, indent=4, ensure_ascii=False))
 
