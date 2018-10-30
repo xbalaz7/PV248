@@ -25,7 +25,7 @@ def solve(input):
                operator = -1               
                continue
 
-            variable = re.search("[a-zA-Z]", spl)
+            variable = re.search("[a-z]", spl)
             coeficient = re.search("[0-9]+", spl)
             
             if coeficient is None:
