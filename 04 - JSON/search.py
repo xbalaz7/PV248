@@ -29,7 +29,7 @@ def get_composers(connection, score_id):
 
 def get_voices(connection, score_id):
     cursor = connection.cursor() 
-    cursor.execute("SELECT * FROM voice WHERE score = ?", (score_id,))       
+    cursor.execute("SELECT * FROM voice WHERE score = ? ORDER BY number", (score_id,))       
     voices = cursor.fetchall()
 
     final_voices = {}
