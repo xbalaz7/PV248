@@ -70,7 +70,7 @@ def solve(input):
            variable_result = result[left_variables.index(variable)]
            output += (variable + " = " + str(variable_result))
            
-           if variable != left_variables[-1] :
+           if variable != sorted(left_variables)[-1] :
               output += ", "
 
        print(output)       
