@@ -10,7 +10,12 @@ def solve(input):
     for line in input:   
         equation_dict = {}
 
-        split_line = line.split(" = ")        
+        strip_line = line.strip()
+         
+        if strip_line == "":
+           break
+        
+        split_line = strip_line.split(" = ")        
         right_constants.append(int(split_line[1].strip()))
         
         split_equation = split_line[0].split(' ')
