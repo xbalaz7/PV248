@@ -47,7 +47,7 @@ def solve(file):
             if numpy.max(peaks) > max_peak: max_peak = numpy.max(peaks)   
 
     if min_peak != sys.float_info.max  and max_peak != sys.float_info.min:
-       print("low: " + str(min_peak) + " high: " + str(max_peak))
+       print("low: " + str(min_peak) + ", high: " + str(max_peak))
     else:
        print("no peaks")
 
