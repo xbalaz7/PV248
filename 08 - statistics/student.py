@@ -87,12 +87,11 @@ def calculate_student(input, id, specific_row):
     
     slope = numpy.linalg.lstsq(sorted(days_since), sorted(points), rcond=None)[0]    
 
-    if slope:
-       dict["regression slope"] = slope[0]
-       sixteen_points = "inf" if slope[0] == 0.0 else start_date + timedelta(days=int(16 / slope))       
-       dict["date 16"] = sixteen_points
-       twenty_points = "inf" if slope[0] == 0.0 else start_date + timedelta(days=int(20 / slope))
-       dict["date 20"] = twenty_points
+    dict["regression slope"] = slope[0]
+    sixteen_points = "inf" if slope[0] == 0.0 else start_date + timedelta(days=int(16 / slope))       
+    dict["date 16"] = sixteen_points
+    twenty_points = "inf" if slope[0] == 0.0 else start_date + timedelta(days=int(20 / slope))
+    dict["date 20"] = twenty_points
        
     print(json.dumps(dict, ensure_ascii=False, indent=4, default=str))
 
