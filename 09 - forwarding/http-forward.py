@@ -30,9 +30,7 @@ def handle_request(url, request_type, headers = None, content = None, timeout = 
 
 def get_handler(url):
     class RequestHandler(BaseHTTPRequestHandler):
-        def do_GET(self):   
-            if 'Host' in self.headers:
-                del self.headers['Host']
+        def do_GET(self):        
 
             response = handle_request(url, "GET", headers = self.headers, content = None, timeout = 1)
             result = {}             
