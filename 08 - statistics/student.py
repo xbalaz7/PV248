@@ -27,15 +27,17 @@ def get_points(dates, specific_row):
     data_frame = data_frame.T
     
     date_columns = list(data_frame.head(0))
-    
+    dates = sorted(dates)
+    date_columns = sorted(date_columns)    
+   
     points = []
     exercise = 0
-    for date in dates:
+    for date in dates:       
         for date_column in date_columns:            
-            if str(date) in date_column:
+            if str(date) in date_column:               
                exercise += float(data_frame[date_columns[date_columns.index(date_column)]])                
-        points.append(exercise)         
-    
+        points.append(exercise)      
+        
     return points
 
 # Points for each exercise
@@ -83,14 +85,18 @@ def calculate_student(input, id, specific_row):
     
     start_date = datetime.strptime('2018-9-17', '%Y-%m-%d').date()
     dates_since = numpy.array([date - start_date for date in dates])
-    days_since = numpy.array([[date.days] for date in dates_since])
+    days_since = numpy.array([date.days for date in dates_since])
     
-    slope = numpy.linalg.lstsq(sorted(days_since), sorted(points), rcond=None)[0]    
-
+    days_since = numpy.sort(days_since)
+    days_since = days_since[:, numpy.newaxis]
+    points = numpy.sort(points)    
+    
+    slope = numpy.linalg.lstsq(days_since, points, rcond=None)[0] 
+    
     dict["regression slope"] = slope[0]
-    sixteen_points = "inf" if slope[0] == 0.0 else start_date + timedelta(days=int(16 / slope))       
+    sixteen_points = "inf" if slope[0] == 0.0 else start_date + timedelta(days= 16 / slope[0])       
     dict["date 16"] = sixteen_points
-    twenty_points = "inf" if slope[0] == 0.0 else start_date + timedelta(days=int(20 / slope))
+    twenty_points = "inf" if slope[0] == 0.0 else start_date + timedelta(days= 20 / slope[0])
     dict["date 20"] = twenty_points
        
     print(json.dumps(dict, ensure_ascii=False, indent=4, default=str))
