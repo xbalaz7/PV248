@@ -58,10 +58,10 @@ def get_handler(url):
             self.wfile.write(bytes(json.dumps(result, indent=4, ensure_ascii = False), "UTF-8"))            
 
         def do_POST(self):             
-            result = {}            
-            content_length = int(self.headers['Content-Length'])
+            result = {}                
             
             try:
+               content_length = int(self.headers['Content-Length'])
                data = self.rfile.read(content_length).decode("UTF-8")               
                data = json.loads(data)
                
