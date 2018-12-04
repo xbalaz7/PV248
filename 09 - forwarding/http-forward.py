@@ -4,6 +4,7 @@ import http
 import socket
 import json
 import ssl
+import traceback
 
 def parse_url(url):    
     url = url.replace("https://", "")   
@@ -15,24 +16,29 @@ def parse_url(url):
     else:
        return url_split[0], "/"
 
-def handle_request(url, request_type, headers = None, content = None, timeout = 1):    
-    name, parameters = parse_url(url)
-   
-    try:              
-       connection = http.client.HTTPSConnection(name, context=ssl._create_unverified_context(), timeout = timeout)        
-       connection.request(request_type, parameters, content, headers=headers)           
+def handle_request(url, request_type, headers = {}, content = None, timeout = 1):    
+    name, parameters = parse_url(url)      
+    try: 
+       connection = None
+       if request_type == "GET":
+          connection = http.client.HTTPConnection(name, timeout = timeout)            
+          connection.request(request_type, parameters, headers=headers)   
+       elif request_type == "POST":
+          connection = http.client.HTTPConnection(name, timeout = timeout)            
+          connection.request(request_type, parameters, content, headers=headers)   
        return connection.getresponse()
-    except socket.timeout:       
+    except socket.timeout as e:       
        return "timeout"
     except:
+       traceback.print_exc()
        return None
 
 
 def get_handler(url):
     class RequestHandler(BaseHTTPRequestHandler):
-        def do_GET(self):        
-
-            response = handle_request(url, "GET", headers = self.headers, content = None, timeout = 1)
+        def do_GET(self):   
+            headers = self.headers
+            response = handle_request(url, "GET", headers, None, 1)
             result = {}             
             
             if response == "timeout":
@@ -56,7 +62,7 @@ def get_handler(url):
             self.wfile.write(bytes(json.dumps(result, indent=4, ensure_ascii = False), "UTF-8"))            
 
         def do_POST(self):             
-            result = {}                
+            result = {}                 
             
             try:
                content_length = int(self.headers['Content-Length'])
