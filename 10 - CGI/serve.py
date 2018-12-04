@@ -28,7 +28,7 @@ def serve_content(self, dir_name):
     path = os.path.abspath(os.path.join(dir_name, file_location))    
     
     if os.path.isfile(path):
-       if path.endswith('.cgi'):
+       if path.endswith(".cgi"):
           # Has to contain directory name and entire string after it (dir, rest = self.cgi_info)        
           self.cgi_info = dir_name, file_location + params   
           # Runs cgi, and also sets all environment variables it can find         
