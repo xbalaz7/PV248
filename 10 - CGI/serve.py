@@ -5,9 +5,7 @@ import http
 import urllib
 import os
 
-def parse_path(url, dir_name):     
-    if dir_name in url:
-       url = url.split(dir_name, 1)[1]
+def parse_path(url, dir_name): 
     
     url_split = url 
     file = None
@@ -23,9 +21,15 @@ class ThreadHTTPServer(ThreadingMixIn, HTTPServer):
     pass
 
 
-def serve_content(self, dir_name):     
-    file_location, params = parse_path(self.path, dir_name)    
-    path = os.path.abspath(os.path.join(dir_name, file_location))    
+def serve_content(self, dir_name):
+    if dir_name.startswith("/"):
+       dir_name = dir_name[1:]
+    if dir_name.endswith("/"):
+       dir_name = dir_name[:-1]
+
+    dir_abspath = os.path.abspath(dir_name)
+    file_location, params = parse_path(self.path, dir_abspath)    
+    path = os.path.abspath(os.path.join(dir_abspath, file_location))        
     
     if os.path.isfile(path):
        if path.endswith(".cgi"):
@@ -69,4 +73,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+   main(sys.argv[1:])
