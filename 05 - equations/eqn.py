@@ -18,7 +18,7 @@ def solve(input):
         split_line = strip_line.split(" = ")        
         right_constants.append(int(split_line[1].strip()))
         
-        split_equation = split_line[0].split(' ')
+        split_equation = split_line[0].split()
         operator = 1        
         for spl in split_equation: 
             spl = spl.strip()                       
@@ -83,6 +83,7 @@ def solve(input):
 def main(argv):
     input = open(sys.argv[1], 'r', encoding='utf_8')    
     solve(input)
+    input.close()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
