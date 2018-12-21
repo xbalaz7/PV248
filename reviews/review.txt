@@ -1,0 +1,148 @@
+review od 433383, *0.5
+
+Review mi pomohol opraviť úlohu a pomohol mi uvedomiť si niektoré základné chyby, ktoré robím. Tiež som sa dozvedel niekoľko Pythonovských princípov
+o ktorých som nevedel. Celkovo, som z review spokojný a veľmi oceňujem snahu ktorá do neho šla.
+
+--------------------------------
+
+
+S výnimkou 5. úlohy som nenašla žiadny vstup, na kt. by tvoje programy padali alebo vracali zlé výsledky, preto som sa zamerala na štylopis kódu.
+—————————————————————
+05 - eqn.py:
+
+Tvoje riešenie padá napr. na vstupe
+#3c +   a + 2b = 14
+#2a - 3c = -7
+#   5b - c + 2a = 9
+
+Problém je v parsovaní ľavej časti rovnice. Ako bolo po prvom vyhodnotení upresnené v DF, musíme počítať s tým, že medzi znamienkom a koeficientom/premennou môže byť viacero medzier. 
+
+V prípade parsovania ľavej strany
+>> split_equation = split_line[0].split(' ')    [line 21]
+split spraví to, že delí string podľa práve 1 medzery. V prípade ľavej strany prvej rovnice ‘3c +   a + 2b’ je však medzier viacej a split ju rozdelí na zoznam ['3c', '+', '', '', 'a', '+', '2b’]. No a keď máš len prázdny string, regex nevyhľadá nič (čiže vráti None) [line 35, 36], v podmienke sa dostane na vyhodnotenie group [line 39] a tam program spadne s chybou (kedže None nemá group). 
+
+Riešením je použiť defaultný argument pre split - čiže len split() - ten delí string podľa bielych znakov. Prvú rovnicu by rozdelil na zoznam ['3c', '+', 'a', '+', '2b'] a to je to čo chceš.
+
+
+A ešte drobná poznámka k súborom:
+>> input = open(sys.argv[1], 'r', encoding='utf_8')    [line 84]
+
+Viem, že je to súbor, ktorý máš na vstupe a čítaš z neho len raz, ale aj tak je lepšie súbor, ktorý otvoríš vždy aj zavrieť. Prečo je to odporúčané je pekne vysvetlené napr. na StackOverflow https://stackoverflow.com/questions/25070854/why-should-i-close-files-in-python . 
+
+Takže buď môžeš použiť:
+>> input.close()
+alebo ešte krajšie (súbor je otvorený len v odtabovanom bloku kódu):
+>> with open(sys.argv[1], 'r', encoding='utf_8') as input:
+>> 	     solve(input)
+a týmto druhým spôsobom sa otvorený súbor automaticky zavrie na konci bloku.
+
+
+Podmienka 
+>> if coeficient is None:
+sa dá jednoduchšie prepísať ako:
+>> if not coeficient:
+
+
+A posledná vec k štýlu, ktorá mi napadá - ak používaš ‘variable.group(0)’ [line 37, 39, 42] alebo hocičo iné viackrát, je lepšie si to hodiť do premennej, aby si pri prípadnej zmene nemusel prepisovať na viacerých miestach. 
+
+
+—————————————————————
+01 - stat.py:
+
+Ako som spomínala už v úlohe 05:
+- každý súbor by mal byť po otvorení a spracovaní aj zatvorený [line 56]
+- ’if match is not None:’ [line 10] sa dá jednoduchšie prepísať ako ‘if match:’
+- ak používaš niečo viackrát (konkrétne ‘sys.argv[2]’ [line 59, 61]), radšej použi premennú/funkciu
+
+
+A naopak, ak používaš výraz len raz vo for cykle alebo podobne, netreba vyrábať premennú:
+>> splitLine = re.split(r";\s", strippedLine)  [line 14]
+>> for composer in splitLine:    [line 15]
+
+2 riadky by sa dali prepísať ako:
+>>  for composer in re.split(r";\s", strippedLine):
+
+
+Pri ukladaní mien autorov a storočí používaš obyčajný dict, kde musíš manuálne zdvíhať počet výskytov o jedničku - jednoduchšie riešenie je použiť Counter (from collections import Counter), ktorý vezme list prvkov a z neho vyrobí dict tvaru: ’nazov_prvku’: ‘pocet_vykytov’.
+
+Takže celá fcia ‘composer()’ by mohla vyzerať:
+>>def composer(file, dict):    
+>>    regex = re.compile(r"Composer: (.|\s)*\S(.|\s)*")
+>>
+>>    composers = []
+>>    for line in file:
+>>        match = regex.match(line)
+>>        if match:            
+>>          composerRemoved = re.sub(r"Composer: ", '', line)
+>>          yearsRemoved = re.sub(r"\([^a-zA-Z]*\)", '', composerRemoved) 
+>>          strippedLine = re.sub(r"\s*$", '', yearsRemoved)   
+>>          composers.extend(re.split(r";\s", strippedLine))
+
+>>    for key, value in Counter(composers).items():
+>>       print(str(key) + ': ' + str(value))
+
+
+
+—————————————————————
+03 - import.py & scorelib.py:
+
+scorelib.py:
+>> def main(argv):   [line 295]
+>>      load(sys.argv[1])   [line 296]
+
+Ako parameter do fcie posielaš ‘argv’, ale nevyužívaš ho (voláš ‘sys.argv’). Ale to je len drobnosť, tak na povšimnutie :) 
+
+
+>> if person != people[-1]:   [line 20]
+Páči sa mi, ako checkuješ poslednú osobu.
+
+
+>> def format_to_string(attribute):   [line 25]
+>>         return_value = ""    
+>>
+>>         if attribute is not None:
+>>              return_value = str(attribute)
+>>
+>>         return return_value
+
+Ako som už spomínala vo zvyšných 2 úlohach, ‘if sth is not None:’ sa dá prepísať ako ‘if sth:’. Premenná ‘return_value’ je vpodstate zbytočná, pretože buď vraciaš prázdny string alebo str(‘attribute’). Celá fcia by sa dala prepísať ako:
+
+>> def format_to_string(attribute):
+>>      if attribute:
+>>           return str(attribute)
+>>      return “”
+
+
+Podobný princíp by sa dal využiť aj v fcii 
+>> def format_partiture(partititure):    [line 51]
+kde, ak je ‘partiture’, vrátiš ‘yes’, inak ‘no’ (bez využitia premennej ‘return_value’).
+
+
+Obdivujem tvoje handlovanie dátumov pri osobe [line 122 a ďalej] (ja som na to použila len 1 regex a stačilo mi :D). 
+
+
+Občas máš v kóde nevyužité premenné, napr. 
+>>  editors_check = None   [line 216]
+>>  incipit = None    [line 247]
+>>  regex = re.compile(r"Print Number: (.|\s)*\S(.|\s)*")   [line 252]
+
+
+import.py:
+>> def get_compostions(prints):   [line 147]
+>>      compositions = []
+>>      for item in prints:
+>>            compositions.append(item.composition())
+>>      return compositions
+
+Neviem, či si už počul v pythone o list comprehension, ale je to super spôsob, ako môžeš for cyklus na 3 riadky prepísať do pochopiteľného zápisu na 1 riadok (a robí to to isté!).
+
+Takže tvoja fcia by sa dala prepísať ako:
+>> def get_compostions(prints):   [line 147]
+>>     return [item.composition() for item in prints]
+
+Celkom cool, nie? 8-)
+
+>> if item.partiture is True:    [line 198]
+Python vyhodnocuje podmienky ako “ak je niečo True”, čiže stačí ‘if item.partiture:’
+
+Čo sa mi veľmi páči na tvojom kóde je jednoduchosť SELECT-ov a prehľadnosť fcií (beriem inšpiráciu, kedže moje 4 vnorené for cykly asi nie sú to pravé orechové).
