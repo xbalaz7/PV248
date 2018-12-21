@@ -1,0 +1,55 @@
+review od od 456240, *0.5
+
+Z tohto review som sa dozvedel, aké štylistycké chyby robím. Niektoré som síce spravil schválne aby to bolo prehliadnejšie, 
+ale niektoré mi unikli. A tiež som sa dozvedel, že by som mal asi použivať pycharm. :D
+
+------------------------------------------------------
+
+====================
+2. test & scorelib
+====================
+- v test.py mainu predávaš sys.argv[1:] úplne zbytočne, keďže s tým parametrom nepracuješ ale znovu voláš sys.argv[1]
+- v scorelib tam máš pomerne dosť štylistyckých warningov od pep8 "indentation is not multiple of four",
+  neviem či máš zle nastavený tab alebo si to odsadzoval medzerami ručne, ale proste skoro celý kód je podčiarknutý :D
+  (prípadne nepoužívaš pycharm ako všetci)
+- takisto som našiel zatúlaný středník na riadku 35... prečo by si tú klávesu vôbec v pythone stláčal? :D
+- load_editors:
+   - tie dva skoro identické while cykly dávajú dojem, že by sa to malo dať spojiť. Navyše, ako aj naznačuje už samotné
+     IDE, tak ten cyklus je trochu taký, nazvyme to divný. Najprv si uložíš editors_check a podľa neho vetvíš.
+     Na konci ifu ho nastavíš na None, čo nemá žiaden zmysel, lebo to je koniec iterácie a na začiatku ďalšej sa ten editors_check
+     hneď prepíše z re.search(r"(.|;)(\S)*, (\S)[^,]*,", editors).
+   - line_stripped = line.strip() je podľa mna zbytočné robiť si ďalšiu premennú na toto, keď s pôvodnym, nestripnutým line nemáš dáky
+     úmysel. Navyše hned za tým ide editors = line_stripped, a inde sa už line_stripped nevyskytuje, takže si mohol proste spraviť
+     editors = line.strip(), čo je ale tiež predošlý "problém".
+   - toto robíš aj v ostatných funkciách, aj keď viem si možno predstaviť, že ti to pomáha sprehladniť ten kód
+- load_partiture: technická drobnosť, ale môže tam byť jednoduchšie "return "yes" in str(partiture_stripped)"
+- load: tých 10 elifov je trochu nechutných na pohľad. ale neviem ti úplne povedať či to je aj neefektívne
+
+====================
+4. getprint & search
+====================
+- opäť predávanie argumentu do mainu bez jeho využitia
+- search_composers:
+   - full_print = {"Print Number" : print_item[0]} sa nikde nepoužíva, budem predpokladať, že to slúžilo pre pomocný výpis
+   - ten print na konci, teda výsledok celého programu, by som možno že nedával do tej funkcie, alebo ju premenoval.
+     Ak si spomenieš na Nikolov princíp minimálneho překvapění (ak si mal C++), tak ja osobne by som od funkcie
+     s takýmto názvom asi nečakal, že mi bude niečo vypisovať.
+- vec, ktorú som nevedel ani ja, ale dostala sa ku mne a do budúcna by ti mohla spríjemniť život:
+  Všimol som si, že ťaháš dáta pomocou číselného indexu. Taký prístup dosť silne spolieha na to, že id je na 0 pozícii.
+  Pri zložitejšom selecte sa ti to ale môže pokaziť a je lepšie ťahať dáta pomocou názvu stĺpca, ako môžeš vidieť na jednoduchom príklade:
+  conn = sqlite3.connect(CONNECTION_STRING)
+  conn.row_factory = sqlite3.Row
+  Vďaka čomu môžeš získávať dáta pomocou result["id"] miesto result[0].
+- ku getprint asi moc nemám čo, mám to prakticky rovnako
+
+====================
+5. eqn
+====================
+- v tejto úlohe som nenašiel nič, čo by som vedel vytknúť, až na nepodstatné, už spomenuté štylistiké nedostatky
+
+====================
+VERDIKT
+====================
+Z chýb a postrehov, ktoré som našiel a uviedol, sa prevažne jednalo o štylizáciu. Verím, že pri niektorých veciach vieš,
+že takto ako si to spravil to úplne ideálne, dalo by sa to skrátiť, ale rozhodol si sa, že zlepšiť čitelnosť
+na úkor pár riadkov / premenných navyše je dobrý obchod.
