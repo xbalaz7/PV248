@@ -1,4 +1,4 @@
-review od od 456240, *0.5
+review od 456240, *0.5
 
 Z tohto review som sa dozvedel, aké štylistycké chyby robím. Niektoré som síce spravil schválne aby to bolo prehliadnejšie, 
 ale niektoré mi unikli. A tiež som sa dozvedel, že by som mal asi použivať pycharm. :D
